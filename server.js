@@ -32,7 +32,7 @@ async function connectDB() {
       ]);
     }
   } catch (err) {
-    console.error("MongoDB bağlantı hatası:", err);
+    console.error("MongoDB bağlantı hatası detayı:", err.message);
   }
 }
 
