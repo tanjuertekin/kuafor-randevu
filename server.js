@@ -2,71 +2,45 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const { MongoClient } = require('mongodb');
 
-const DB_FILE = path.join(__dirname, 'db.json');
-const ORTAK_DB_FILE = path.join(__dirname, 'ortakdb.json');
-const HTML_FILE = path.join(__dirname, 'index.html');
+// MongoDB Bağlantı Adresi (Kendi bağlantı adresinizi buraya yapıştırın)
+const MONGO_URI = 'mongodb+srv://egemynet_db_user:IscifeqRAWIHSxk@cluster0.rrsufvf.mongodb.net/?appName=Cluster0';
+const DB_NAME = 'kuafor_randevu_db';
 
-function dbOku() {
-  if (!fs.existsSync(DB_FILE)) {
-    const ilkVeri = {
-      Ayarlar: [
+let dbClient = null;
+let db = null;
+
+// MongoDB'ye Bağlanma Fonksiyonu
+async function connectDB() {
+  try {
+    dbClient = new MongoClient(MONGO_URI);
+    await dbClient.connect();
+    db = dbClient.db(DB_NAME);
+    console.log("MongoDB Atlas'a başarıyla bağlanıldı!");
+
+    // Varsayılan Ayarlar Koleksiyonu Kontrolü
+    const ayarlarColl = db.collection('Ayarlar');
+    const count = await ayarlarColl.countDocuments();
+    if (count === 0) {
+      await ayarlarColl.insertMany([
         { satir: 1, sayfaAdi: "Randevular", gorunenAd: "Ethem (Yönetici)", kacinci: "ethem", sifre: "1234" },
         { satir: 2, sayfaAdi: "Randevular1", gorunenAd: "Mustafa", kacinci: "mustafa", sifre: "1234" },
         { satir: 3, sayfaAdi: "Randevular2", gorunenAd: "Berber 2", kacinci: "berber2", sifre: "1234" },
         { satir: 4, sayfaAdi: "Randevular3", gorunenAd: "Berber 3", kacinci: "berber3", sifre: "1234" },
         { satir: 5, sayfaAdi: "Randevular4", gorunenAd: "Berber 4", kacinci: "berber4", sifre: "1234" }
-      ],
-      Randevular: [],
-      Randevular1: [],
-      Randevular2: [],
-      Randevular3: [],
-      Randevular4: []
-    };
-    fs.writeFileSync(DB_FILE, JSON.stringify(ilkVeri, null, 2), 'utf8');
-  }
-  const icerik = fs.readFileSync(DB_FILE, 'utf8');
-  let data = JSON.parse(icerik);
-  
-  // Eskiden kalan Musteriler alanı varsa temizle
-  if (data.Musteriler) {
-    delete data.Musteriler;
-    dbYaz(data);
-  }
-  
-  return data;
-}
-
-function dbYaz(veri) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(veri, null, 2), 'utf8');
-}
-
-// Arka plandaki ortak müşteri arşiv dosyasına kayıt ekleyen fonksiyon
-function ortakDbyeEkle(yeniMusteri) {
-  try {
-    let ortakMusteriler = [];
-    if (fs.existsSync(ORTAK_DB_FILE)) {
-      const icerik = fs.readFileSync(ORTAK_DB_FILE, 'utf8');
-      ortakMusteriler = JSON.parse(icerik);
+      ]);
     }
-    
-    // Aynı telefon veya isim daha önce eklenmemişse veya genel arşiv için direkt ekle
-    ortakMusteriler.push({
-      tarih: yeniMusteri.tarih,
-      saat: yeniMusteri.saat,
-      musteri: yeniMusteri.musteri,
-      telefon: yeniMusteri.telefon,
-      personel: yeniMusteri.personel,
-      kayitZamani: new Date().toISOString()
-    });
-
-    fs.writeFileSync(ORTAK_DB_FILE, JSON.stringify(ortakMusteriler, null, 2), 'utf8');
   } catch (err) {
-    console.error("Ortak DB kayıt hatası:", err);
+    console.error("MongoDB bağlantı hatası:", err);
   }
 }
 
-const server = http.createServer((req, res) => {
+connectDB();
+
+const HTML_FILE = path.join(__dirname, 'index.html');
+
+const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -79,7 +53,12 @@ const server = http.createServer((req, res) => {
 
   const parsedUrl = url.parse(req.url, true);
   const pathname = parsedUrl.pathname;
-  const db = dbOku();
+
+  if (!db) {
+    res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ success: false, message: "Veritabanı bağlantısı henüz kurulamadı." }));
+    return;
+  }
 
   if (req.method === 'GET') {
     if (pathname === '/' || pathname === '/index.html') {
@@ -96,29 +75,28 @@ const server = http.createServer((req, res) => {
 
     if (pathname === '/api/randevulariGetir') {
       const sayfa = parsedUrl.query.sayfa || 'Randevular';
+      const randevular = await db.collection(sayfa).find({}).toArray();
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-      res.end(JSON.stringify(db[sayfa] || []));
+      res.end(JSON.stringify(randevular));
       return;
     }
     
-    // Tüm berberlerin randevularından tekilleştirilmiş müşteri listesini döndüren API
     if (pathname === '/api/tumMusterileriGetir') {
       let tumMusterilerMap = {};
       const berberSayfalari = ['Randevular', 'Randevular1', 'Randevular2', 'Randevular3', 'Randevular4'];
       
-      berberSayfalari.forEach(sayfa => {
-        if (db[sayfa] && Array.isArray(db[sayfa])) {
-          db[sayfa].forEach(r => {
-            if (r.musteri && r.telefon) {
-              let temizIsim = r.musteri.trim().toLowerCase();
-              tumMusterilerMap[temizIsim] = {
-                musteri: r.musteri.trim(),
-                telefon: r.telefon.trim()
-              };
-            }
-          });
-        }
-      });
+      for (const sayfa of berberSayfalari) {
+        const kayitlar = await db.collection(sayfa).find({}).toArray();
+        kayitlar.forEach(r => {
+          if (r.musteri && r.telefon) {
+            let temizIsim = r.musteri.trim().toLowerCase();
+            tumMusterilerMap[temizIsim] = {
+              musteri: r.musteri.trim(),
+              telefon: r.telefon.trim()
+            };
+          }
+        });
+      }
 
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify(Object.values(tumMusterilerMap)));
@@ -126,8 +104,9 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname === '/api/personelleriGetir') {
+      const ayarlar = await db.collection('Ayarlar').find({}).toArray();
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-      res.end(JSON.stringify(db.Ayarlar || []));
+      res.end(JSON.stringify(ayarlar));
       return;
     }
   }
@@ -135,14 +114,15 @@ const server = http.createServer((req, res) => {
   if (req.method === 'POST') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
-    req.on('end', () => {
+    req.on('end', async () => {
       try {
         const data = JSON.parse(body || '{}');
 
         if (data.islem === 'giris') {
           const girilenKadi = (data.kadi || '').trim().toLowerCase();
           const girilenSifre = (data.sifre || '').trim();
-          const kullanici = db.Ayarlar.find(u => u.kacinci.toLowerCase() === girilenKadi && u.sifre === girilenSifre);
+          const ayarlar = await db.collection('Ayarlar').find({}).toArray();
+          const kullanici = ayarlar.find(u => u.kacinci.toLowerCase() === girilenKadi && u.sifre === girilenSifre);
 
           if (kullanici) {
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -155,13 +135,10 @@ const server = http.createServer((req, res) => {
         }
 
         if (data.islem === 'personelGuncelle') {
-          const personel = db.Ayarlar.find(u => u.sayfaAdi === data.sayfaAdi);
-          if (personel) {
-            personel.gorunenAd = data.gorunenAd;
-            personel.kacinci = data.kacinci;
-            personel.sifre = data.sifre;
-            dbYaz(db);
-          }
+          await db.collection('Ayarlar').updateOne(
+            { sayfaAdi: data.sayfaAdi },
+            { $set: { gorunenAd: data.gorunenAd, kacinci: data.kacinci, sifre: data.sifre } }
+          );
           res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
           res.end(JSON.stringify({ success: true }));
           return;
@@ -169,7 +146,6 @@ const server = http.createServer((req, res) => {
 
         if (data.islem === 'randevuEkle') {
           const sayfa = data.sayfa || 'Randevular';
-          if (!db[sayfa]) db[sayfa] = [];
           const yeniRandevu = {
             satir: Date.now(),
             tarih: data.tarih,
@@ -179,11 +155,17 @@ const server = http.createServer((req, res) => {
             personel: data.personel
           };
           
-          db[sayfa].push(yeniRandevu);
-          dbYaz(db);
-
-          // Arka planda ortak veritabanına da kaydet (kullanıcıyı yormaz)
-          ortakDbyeEkle(yeniRandevu);
+          await db.collection(sayfa).insertOne(yeniRandevu);
+          
+          // Ortak müşteri arşivi için ayrı bir koleksiyona da ekleyelim
+          await db.collection('OrtakMusteriler').insertOne({
+            tarih: yeniRandevu.tarih,
+            saat: yeniRandevu.saat,
+            musteri: yeniRandevu.musteri,
+            telefon: yeniRandevu.telefon,
+            personel: yeniRandevu.personel,
+            kayitZamani: new Date().toISOString()
+          });
 
           res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
           res.end(JSON.stringify({ success: true }));
@@ -192,10 +174,7 @@ const server = http.createServer((req, res) => {
 
         if (data.islem === 'sil') {
           const sayfa = data.sayfa || 'Randevular';
-          if (db[sayfa]) {
-            db[sayfa] = db[sayfa].filter(r => r.satir !== data.satir);
-            dbYaz(db);
-          }
+          await db.collection(sayfa).deleteOne({ satir: data.satir });
           res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
           res.end(JSON.stringify({ success: true }));
           return;
@@ -216,6 +195,7 @@ const server = http.createServer((req, res) => {
   res.end(JSON.stringify({ error: "Bulunamadı" }));
 });
 
-server.listen(4000, () => {
-  console.log('Sunucu çalışıyor: http://localhost:4000 adresini tarayıcınıza yazın.');
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`Sunucu çalışıyor, port: ${PORT}`);
 });
