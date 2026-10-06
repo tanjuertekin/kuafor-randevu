@@ -5,7 +5,7 @@ const url = require('url');
 const { MongoClient } = require('mongodb');
 
 // MongoDB Bağlantı Adresi (Kendi bağlantı adresinizi buraya yapıştırın)
-const MONGO_URI = 'mongodb+srv://egemynet_db_user:IscifeqRAWIHSxk@cluster0.rrsufvf.mongodb.net/?appName=Cluster0&tls=true&tlsAllowInvalidCertificates=true';
+const MONGO_URI = 'mongodb+srv://egemynet_db_user:berber35render@cluster0.rrsufvf.mongodb.net/?appName=Cluster0';
 const DB_NAME = 'kuafor_randevu_db';
 
 let dbClient = null;
