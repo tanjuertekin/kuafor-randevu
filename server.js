@@ -24,11 +24,11 @@ async function connectDB() {
     const count = await ayarlarColl.countDocuments();
     if (count === 0) {
       await ayarlarColl.insertMany([
-        { satir: 1, sayfaAdi: "Randevular", gorunenAd: "Ethem (Yönetici)", kacinci: "ethem", sifre: "1234" },
-        { satir: 2, sayfaAdi: "Randevular1", gorunenAd: "Mustafa", kacinci: "mustafa", sifre: "1234" },
-        { satir: 3, sayfaAdi: "Randevular2", gorunenAd: "Berber 2", kacinci: "berber2", sifre: "1234" },
-        { satir: 4, sayfaAdi: "Randevular3", gorunenAd: "Berber 3", kacinci: "berber3", sifre: "1234" },
-        { satir: 5, sayfaAdi: "Randevular4", gorunenAd: "Berber 4", kacinci: "berber4", sifre: "1234" }
+        { satir: 1, sayfaAdi: "Randevular", gorunenAd: "Tanju", kacinci: "tanju", sifre: "1234", isAdmin: true },
+        { satir: 2, sayfaAdi: "Randevular1", gorunenAd: "Mustafa", kacinci: "mustafa", sifre: "1234", isAdmin: false },
+        { satir: 3, sayfaAdi: "Randevular2", gorunenAd: "Berber 2", kacinci: "berber2", sifre: "1234", isAdmin: false },
+        { satir: 4, sayfaAdi: "Randevular3", gorunenAd: "Berber 3", kacinci: "berber3", sifre: "1234", isAdmin: false },
+        { satir: 5, sayfaAdi: "Randevular4", gorunenAd: "Berber 4", kacinci: "berber4", sifre: "1234", isAdmin: false }
       ]);
     }
   } catch (err) {
@@ -125,8 +125,16 @@ const server = http.createServer(async (req, res) => {
           const kullanici = ayarlar.find(u => u.kacinci.toLowerCase() === girilenKadi && u.sifre === girilenSifre);
 
           if (kullanici) {
+            // satir numarası 1 olan her zaman otomatik yöneticidir
+            const yoneticiMi = (kullanici.satir === 1 || kullanici.isAdmin === true);
+
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ success: true, gorunenAd: kullanici.gorunenAd, sayfaAdi: kullanici.sayfaAdi }));
+            res.end(JSON.stringify({ 
+              success: true, 
+              gorunenAd: kullanici.gorunenAd, 
+              sayfaAdi: kullanici.sayfaAdi,
+              isAdmin: yoneticiMi 
+            }));
           } else {
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ success: false, message: "Kullanıcı adı veya şifre hatalı!" }));
@@ -174,10 +182,9 @@ const server = http.createServer(async (req, res) => {
 
         if (data.islem === 'sil') {
           const sayfa = data.sayfa || 'Randevular';
-          await db.collection(sayfa).deleteOne({ satir: data.satir });
+          await db.collection(sayfa).deleteOne({ satir: data.satir});
           res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-          res.end(JSON.stringify({ success: true }));
-          return;
+          res.end(JSON.stringify({ success: false, message: "Geçersiz işlem" }));
         }
 
         res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -191,6 +198,8 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  pages = ['Randevular', 'Randevular1', 'Randevular2', 'Randevular3', 'Randevular4'];
+  
   res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify({ error: "Bulunamadı" }));
 });
