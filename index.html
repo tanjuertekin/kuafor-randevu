@@ -6,47 +6,83 @@
   <title>Kuaför Randevu Sistemi</title>
   <style>
     :root {
-      --primary: #2c3e50;
-      --secondary: #3498db;
-      --success: #27ae60;
-      --danger: #e74c3c;
-      --light: #f8f9fa;
-      --dark: #333;
+      --primary: #1e3a5f;
+      --secondary: #0088ff;
+      --accent: #0055b3;
+      --success: #10b981;
+      --danger: #e60026;
+      --light: #e6f2ff;
+      --dark: #152942;
+      --bg-body: #e6f2ff;
+      --bg-card: #e6f2ff;
+      --bg-item: #ffffff;
+      --text-main: #152942;
+      --text-sub: #555555;
+      --border-color: #cce0ff;
+      --input-bg: #ffffff;
+      --input-border: #b3d1ff;
+      --header-bg: #d0e4ff;
+      --header-text: #152942;
+      --header-sub: #445566;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: #f0f2f5; color: var(--dark); padding-bottom: 40px; }
+    [data-theme="dark"] {
+      --primary: #38bdf8;
+      --secondary: #0ea5e9;
+      --accent: #0284c7;
+      --success: #34d399;
+      --danger: #f87171;
+      --light: #1e293b;
+      --dark: #f8fafc;
+      --bg-body: #0f172a;
+      --bg-card: #1e293b;
+      --bg-item: #0f172a;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --border-color: #334155;
+      --input-bg: #0f172a;
+      --input-border: #475569;
+      --header-bg: #1e293b;
+      --header-text: #f8fafc;
+      --header-sub: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.2s, color 0.2s; }
+    body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 40px; }
 
     #loginScreen {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      background: linear-gradient(135deg, #1e3a5f, #0f172a);
       padding: 20px;
     }
     .login-card {
-      background: white;
+      background: var(--bg-card);
       padding: 30px 20px;
       border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
       width: 100%;
       max-width: 380px;
       text-align: center;
+      border-top: 4px solid var(--secondary);
     }
-    .login-card h2 { margin-bottom: 20px; color: var(--primary); font-size: 24px; }
+    .login-card h2 { margin-bottom: 5px; color: var(--text-main); font-size: 22px; font-weight: bold; }
+    .login-card .subtitle { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; font-weight: normal; }
     .form-group { margin-bottom: 15px; text-align: left; }
-    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; color: #555; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; color: var(--text-main); }
     .form-control {
       width: 100%;
       padding: 12px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--input-border);
       border-radius: 8px;
       font-size: 16px;
       outline: none;
-      background: #fff;
+      background: var(--input-bg);
+      color: var(--text-main);
     }
-    .form-control:focus { border-color: var(--secondary); }
+    .form-control:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15); }
 
     input[type="date"]::-webkit-calendar-picker-indicator {
       background: transparent;
@@ -74,73 +110,89 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-    .btn:active { background: #2980b9; }
+    .btn:active { background: var(--accent); }
 
     #appScreen { display: none; }
     header {
-      background: var(--primary);
-      color: white;
-      padding: 15px 20px;
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 20px;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       position: sticky;
       top: 0;
       z-index: 100;
       max-width: 600px;
       margin: 0 auto;
-      border-bottom-left-radius: 10px;
-      border-bottom-right-radius: 10px;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      border-bottom: 3px solid var(--border-color);
+      gap: 12px;
     }
-    header h1 { font-size: 18px; }
-    .header-btns { display: flex; gap: 8px; align-items: center; }
+    header .header-content { display: flex; flex-direction: column; align-items: center; }
+    header h1 { font-size: 18px; font-weight: bold; letter-spacing: 0.5px; color: var(--header-text); }
+    header .subtitle { font-size: 14px; color: var(--header-sub); font-weight: normal; margin-top: 3px; }
+    .header-btns { display: flex; gap: 8px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap; }
     
     .action-btn {
-      background: var(--secondary);
-      color: white;
-      border: none;
+      background: var(--bg-item);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
       padding: 8px 14px;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      min-width: 75px;
       text-align: center;
     }
-    .action-btn:active { background: #2980b9; }
+    .action-btn:active { background: var(--border-color); }
 
     .container { padding: 15px; max-width: 600px; margin: 0 auto; }
 
     .card {
-      background: white;
+      background: var(--bg-card);
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
+      border: 1px solid var(--border-color);
     }
-    .card h3 { margin-bottom: 15px; font-size: 18px; color: var(--primary); border-bottom: 2px solid #f0f2f5; padding-bottom: 8px; }
+    .card h3 { 
+      margin-bottom: 15px; 
+      font-size: 16px; 
+      color: white; 
+      background: var(--secondary); 
+      padding: 10px 15px; 
+      border-radius: 8px; 
+      text-align: center;
+    }
 
     .appointment-list { display: flex; flex-direction: column; gap: 10px; }
     .appointment-item {
-      background: white;
+      background: var(--bg-item);
       padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
       border-left: 5px solid var(--secondary);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .appointment-info div { font-size: 14px; margin-bottom: 3px; }
-    .appointment-info .time { font-weight: bold; font-size: 15px; color: var(--primary); }
-    .appointment-info .name { font-size: 16px; font-weight: bold; color: var(--dark); }
+    .appointment-info div { font-size: 14px; margin-bottom: 3px; color: var(--text-main); }
+    .appointment-info .time { font-weight: bold; font-size: 15px; color: var(--secondary); }
+    .appointment-info .name { font-size: 16px; font-weight: bold; color: var(--text-main); }
     
     .item-btns { display: flex; gap: 6px; }
     .call-btn {
-      background: #e8f8f0;
+      background: rgba(16, 185, 129, 0.15);
       color: var(--success);
-      border: none;
+      border: 1px solid var(--success);
       padding: 8px 12px;
       border-radius: 6px;
       font-weight: bold;
@@ -151,9 +203,9 @@
       font-size: 14px;
     }
     .del-btn {
-      background: #fde8e8;
+      background: rgba(230, 0, 38, 0.15);
       color: var(--danger);
-      border: none;
+      border: 1px solid var(--danger);
       padding: 8px 12px;
       border-radius: 6px;
       font-weight: bold;
@@ -162,16 +214,20 @@
 
     #adminScreen { display: none; padding: 0 15px; max-width: 600px; margin: 0 auto; }
     .koltuk-row {
-      background: #fff;
+      background: var(--bg-card);
       padding: 15px;
       border-radius: 10px;
       margin-bottom: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      border-left: 5px solid #f39c12;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-left: 5px solid var(--primary);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
     }
-    .koltuk-row label { font-size: 12px; font-weight: bold; color: #666; display: block; margin-top: 8px; margin-bottom: 2px; }
-    .koltuk-row input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; margin-bottom: 5px; }
-    .koltuk-row button { background: var(--success); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; width: 100%; margin-top: 10px; cursor: pointer; }
+    .koltuk-row label { font-size: 12px; font-weight: bold; color: var(--text-main); display: block; margin-top: 8px; margin-bottom: 2px; }
+    .koltuk-row input { width: 100%; padding: 10px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main); border-radius: 6px; font-size: 14px; margin-bottom: 5px; }
+    .koltuk-row button { background: var(--secondary); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; width: 100%; margin-top: 10px; cursor: pointer; }
+    .koltuk-row button:active { background: var(--accent); }
 
     #statsScreen { display: none; padding: 0 15px; max-width: 600px; margin: 0 auto; }
     .filter-group {
@@ -182,13 +238,13 @@
       margin-bottom: 15px;
     }
     .filter-btn {
-      background: #e2e8f0;
-      border: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       padding: 8px 14px;
       border-radius: 20px;
       font-size: 13px;
       font-weight: 600;
-      color: #4a5568;
+      color: var(--text-main);
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.2s;
@@ -196,31 +252,41 @@
     .filter-btn.active {
       background: var(--secondary);
       color: white;
+      border-color: var(--secondary);
     }
     .stat-table-card {
-      background: white;
+      background: var(--bg-card);
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
       margin-bottom: 20px;
+      border: 1px solid var(--border-color);
     }
     .stat-table {
       width: 100%;
-      table-layout: fixed;
       border-collapse: collapse;
-      text-align: left;
+      text-align: center;
       font-size: 13px;
     }
     .stat-table th, .stat-table td {
       padding: 10px 8px;
-      border-bottom: 1px solid #edf2f7;
-      word-break: break-word;
-      overflow: hidden;
+      border-bottom: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+    .stat-table th:last-child, .stat-table td:last-child {
+      border-right: none;
     }
     .stat-table th {
-      background: #f7fafc;
-      color: var(--primary);
+      background: var(--bg-item);
+      color: var(--text-main);
       font-weight: bold;
+    }
+    .stat-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-main);
     }
     .stat-table tr:last-child td { border-bottom: none; }
     .error-msg { color: var(--danger); font-size: 14px; margin-top: 10px; text-align: center; }
@@ -231,7 +297,11 @@
   <!-- GİRİŞ EKRANI -->
   <div id="loginScreen">
     <div class="login-card">
-      <h2>Kuaför Girişi</h2>
+      <div style="text-align: right; margin-bottom: 10px;">
+        <button class="action-btn" onclick="temaDegistir()" style="padding: 4px 8px; font-size: 11px;">🌙 / ☀️ Tema</button>
+      </div>
+      <h2>Kuaför Randevu Sistemi</h2>
+      <div class="subtitle">Giriş Paneli</div>
       <div class="form-group">
         <label>Kullanıcı Adı</label>
         <input type="text" id="kadi" class="form-control" placeholder="">
@@ -248,9 +318,13 @@
   <!-- ANA PERSONEL EKRANI -->
   <div id="appScreen">
     <header>
-      <h1 id="headerTitle">Yükleniyor...</h1>
+      <div class="header-content">
+        <h1>Kuaför Randevu Sistemi</h1>
+        <div class="subtitle" id="userSubtitle">Kuaför</div>
+      </div>
       <div class="header-btns">
         <button id="yoneticiMenuBtn" class="action-btn" style="display:none;" onclick="yoneticiSayfasinaGit()">Yönetim</button>
+        <button class="action-btn" onclick="temaDegistir()">Tema</button>
         <button class="action-btn" onclick="cikisYap()">Çıkış</button>
       </div>
     </header>
@@ -288,14 +362,18 @@
   <!-- YÖNETİCİ PANELİ EKRANI -->
   <div id="adminScreen">
     <header>
-      <h1>Yönetici Paneli</h1>
+      <div class="header-content">
+        <h1>Kuaför Randevu Sistemi</h1>
+        <div class="subtitle">Yönetici Paneli</div>
+      </div>
       <div class="header-btns">
         <button class="action-btn" onclick="istatistikSayfasinaGit()">İstatistik</button>
+        <button class="action-btn" onclick="temaDegistir()">Tema</button>
         <button class="action-btn" onclick="anaSayfayaDon()">Geri Dön</button>
       </div>
     </header>
     <div class="container" style="padding-top: 20px;">
-      <p style="margin-bottom: 15px; color: #555; font-size: 14px;">Berber isimlerini, kullanıcı adlarını ve şifrelerini buradan düzenleyebilirsiniz.</p>
+      <p style="margin-bottom: 15px; color: var(--text-main); font-size: 14px;">Berber isimlerini, kullanıcı adlarını ve şifrelerini buradan düzenleyebilirsiniz.</p>
       <div id="koltuklarListesi"></div>
     </div>
   </div>
@@ -303,8 +381,12 @@
   <!-- İSTATİSTİKLER EKRANI -->
   <div id="statsScreen">
     <header>
-      <h1>İstatistikler</h1>
+      <div class="header-content">
+        <h1>Kuaför Randevu Sistemi</h1>
+        <div class="subtitle">İstatistikler</div>
+      </div>
       <div class="header-btns">
+        <button class="action-btn" onclick="temaDegistir()">Tema</button>
         <button class="action-btn" onclick="yoneticiSayfasinaGit()">Geri Dön</button>
       </div>
     </header>
@@ -333,14 +415,17 @@
     let tumPersonellerinRandevulari = {}; 
     let aktifIstatistikFiltresi = 'bugun';
 
-    // Sayfa açıldığında tarih alanına bugünün tarihini atayalım
     document.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem('kuaforTheme') || 'light';
+      if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+
       const tarihInput = document.getElementById('randevuTarih');
       if (tarihInput) {
         tarihInput.valueAsDate = new Date();
       }
       
-      // Kayıtlı oturum kontrolü
       const saved = localStorage.getItem('kuaforUser');
       if (saved) {
         try {
@@ -351,6 +436,17 @@
         }
       }
     });
+
+    function temaDegistir() {
+      const current = document.documentElement.getAttribute('data-theme');
+      if (current === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('kuaforTheme', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('kuaforTheme', 'dark');
+      }
+    }
 
     function tarihNoktaliyeCevir(tarihStr) {
       if (!tarihStr) return '';
@@ -427,60 +523,273 @@
     }
 
     async function girisYap() {
-      const kadi = document.getElementById('kadi').value.trim();
-      const sifre = document.getElementById('sifre').value.trim();
+      const kadiInput = document.getElementById('kadi').value.trim();
+      const sifreInput = document.getElementById('sifre').value.trim();
       const errorDiv = document.getElementById('loginError');
+      errorDiv.textContent = '';
 
-      errorDiv.innerText = "";
-      if (!kadi || !sifre) {
-        errorDiv.innerText = "Lütfen kullanıcı adı ve şifre girin!";
+      if (!kadiInput || !sifreInput) {
+        errorDiv.textContent = "Lütfen kullanıcı adı ve şifre giriniz.";
         return;
       }
 
       try {
-        const response = await fetch(`${API_URL}/`, {
+        const res = await fetch(API_URL + '/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ islem: 'giris', kadi, sifre })
+          body: JSON.stringify({ islem: 'giris', kadi: kadiInput, sifre: sifreInput })
         });
-        const data = await response.json();
+        const data = await res.json();
 
         if (data.success) {
-          currentUser = { kadi: kadi, gorunenAd: data.gorunenAd, sayfaAdi: data.sayfaAdi };
+          currentUser = {
+            gorunenAd: data.gorunenAd,
+            sayfaAdi: data.sayfaAdi,
+            kadi: kadiInput
+          };
           localStorage.setItem('kuaforUser', JSON.stringify(currentUser));
           ekraniGuncelle();
         } else {
-          errorDiv.innerText = data.message || "Giriş başarısız!";
+          errorDiv.textContent = data.message || "Giriş başarısız!";
         }
       } catch (err) {
-        errorDiv.innerText = "Sunucuya bağlanılamadı!";
+        errorDiv.textContent = "Sunucu bağlantı hatası oluştu.";
+        console.error(err);
       }
     }
 
-    function ekraniGuncelle() {
-      if (!currentUser) return;
+    function cikisYap() {
+      localStorage.removeItem('kuaforUser');
+      currentUser = null;
+      document.getElementById('appScreen').style.display = 'none';
+      document.getElementById('adminScreen').style.display = 'none';
+      document.getElementById('statsScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('kadi').value = '';
+      document.getElementById('sifre').value = '';
+    }
 
+    async function ekraniGuncelle() {
+      if (!currentUser) return;
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('adminScreen').style.display = 'none';
       document.getElementById('statsScreen').style.display = 'none';
       document.getElementById('appScreen').style.display = 'block';
-      document.getElementById('headerTitle').innerText = currentUser.gorunenAd;
 
-      randevulariGetir();
+      const userSubtitle = document.getElementById('userSubtitle');
+      if (userSubtitle && currentUser.gorunenAd) {
+        userSubtitle.textContent = `Kuaför ${currentUser.gorunenAd}`;
+      }
 
-      // Büyük/küçük harf duyarlılığından bağımsız olarak 'ethem' kullanıcısına yönetim butonu verelim
-      if (currentUser.kadi && currentUser.kadi.toLowerCase() === 'ethem') {
-        document.getElementById('yoneticiMenuBtn').style.display = 'inline-block';
+      const yonetimBtn = document.getElementById('yoneticiMenuBtn');
+      if (currentUser.sayfaAdi === 'Randevular') {
+        yonetimBtn.style.display = 'inline-block';
       } else {
-        document.getElementById('yoneticiMenuBtn').style.display = 'none';
+        yonetimBtn.style.display = 'none';
+      }
+
+      await randevulariGetir();
+      await tumMusterileriGetir();
+    }
+
+    async function randevulariGetir() {
+      try {
+        const res = await fetch(`${API_URL}/api/randevulariGetir?sayfa=${currentUser.sayfaAdi}`);
+        let hamRandevular = await res.json();
+        
+        const simdikiZaman = new Date();
+
+        aktifRandevular = hamRandevular.filter(r => {
+          if (!r.tarih || !r.saat) return false;
+          let [yil, ay, gun] = r.tarih.split('-').map(Number);
+          let [saat, dakika] = r.saat.split(':').map(Number);
+          let randevuZamani = new Date(yil, ay - 1, gun, saat, dakika, 0);
+          return randevuZamani >= simdikiZaman;
+        });
+
+        const listContainer = document.getElementById('randevuListesi');
+        listContainer.innerHTML = '';
+
+        if (!aktifRandevular || aktifRandevular.length === 0) {
+          listContainer.innerHTML = '<p style="color:var(--text-sub); font-size:14px; text-align:center; padding:10px;">Henüz aktif randevu bulunmuyor.</p>';
+          saatleriGuncelle();
+          return;
+        }
+
+        aktifRandevular.sort((a, b) => {
+          if (a.tarih !== b.tarih) return a.tarih.localeCompare(b.tarih);
+          return a.saat.localeCompare(b.saat);
+        });
+
+        aktifRandevular.forEach(r => {
+          let item = document.createElement('div');
+          item.className = 'appointment-item';
+          item.innerHTML = `
+            <div class="appointment-info">
+              <div class="time">${tarihNoktaliyeCevir(r.tarih)} - ${r.saat}</div>
+              <div class="name">${r.musteri}</div>
+              <div style="color:var(--text-sub);">${r.telefon || ''}</div>
+            </div>
+            <div class="item-btns">
+              ${r.telefon ? `<a href="tel:${r.telefon}" class="call-btn">Ara</a>` : ''}
+              <button class="del-btn" onclick="randevuSil(${r.satir})">Sil</button>
+            </div>
+          `;
+          listContainer.appendChild(item);
+        });
+
+        saatleriGuncelle();
+      } catch (err) {
+        console.error("Randevular getirilemedi:", err);
       }
     }
 
-    function yoneticiSayfasinaGit() {
+    async function tumMusterileriGetir() {
+      try {
+        const res = await fetch(API_URL + '/api/tumMusterileriGetir');
+        const liste = await res.json();
+        tumVeritabaniMusterileri = {};
+        
+        const datalist = document.getElementById('musteriListesi');
+        datalist.innerHTML = '';
+
+        liste.forEach(m => {
+          tumVeritabaniMusterileri[m.musteri.toLowerCase()] = m.telefon;
+          let opt = document.createElement('option');
+          opt.value = m.musteri;
+          datalist.appendChild(opt);
+        });
+      } catch (err) {
+        console.error("Müşteriler getirilemedi:", err);
+      }
+    }
+
+    function musteriSecildi(input) {
+      let val = input.value.trim().toLowerCase();
+      if (tumVeritabaniMusterileri[val]) {
+        document.getElementById('musteriTel').value = tumVeritabaniMusterileri[val];
+      }
+    }
+
+    async function randevuEkle() {
+      const tarih = document.getElementById('randevuTarih').value;
+      const saat = document.getElementById('randevuSaat').value;
+      const musteri = document.getElementById('musteriAdi').value.trim();
+      const telefon = document.getElementById('musteriTel').value.trim();
+
+      if (!tarih || !saat || !musteri) {
+        alert("Lütfen tarih, saat ve müşteri adını doldurun.");
+        return;
+      }
+
+      try {
+        const res = await fetch(API_URL + '/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            islem: 'randevuEkle',
+            sayfa: currentUser.sayfaAdi,
+            tarih,
+            saat,
+            musteri,
+            telefon,
+            personel: currentUser.gorunenAd
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('musteriAdi').value = '';
+          document.getElementById('musteriTel').value = '';
+          await randevulariGetir();
+        } else {
+          alert(data.message || "Randevu eklenemedi.");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function randevuSil(satirKodu) {
+      if (!confirm("Bu randevuyu silmek istediğinize emin misiniz?")) return;
+      try {
+        const res = await fetch(API_URL + '/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            islem: 'sil',
+            sayfa: currentUser.sayfaAdi,
+            satir: satirKodu
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          await randevulariGetir();
+        } else {
+          alert("Silme işlemi başarısız.");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function yoneticiSayfasinaGit() {
       document.getElementById('appScreen').style.display = 'none';
       document.getElementById('statsScreen').style.display = 'none';
       document.getElementById('adminScreen').style.display = 'block';
-      personelleriGetir();
+      
+      try {
+        const res = await fetch(API_URL + '/api/personelleriGetir');
+        const personeller = await res.json();
+        
+        const container = document.getElementById('koltuklarListesi');
+        container.innerHTML = '';
+
+        personeller.forEach(p => {
+          let row = document.createElement('div');
+          row.className = 'koltuk-row';
+          row.innerHTML = `
+            <div style="font-weight:bold; margin-bottom:5px; color:var(--text-main);">${p.sayfaAdi}</div>
+            <label>Görünen Ad</label>
+            <input type="text" id="gorunen_${p.sayfaAdi}" value="${p.gorunenAd || ''}">
+            <label>Kullanıcı Adı</label>
+            <input type="text" id="kadi_${p.sayfaAdi}" value="${p.kacinci || ''}">
+            <label>Şifre</label>
+            <input type="text" id="sifre_${p.sayfaAdi}" value="${p.sifre || ''}">
+            <button onclick="personelKaydet('${p.sayfaAdi}')">Güncelle</button>
+          `;
+          container.appendChild(row);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function personelKaydet(sayfaAdi) {
+      const gorunenAd = document.getElementById(`gorunen_${sayfaAdi}`).value.trim();
+      const kacinci = document.getElementById(`kadi_${sayfaAdi}`).value.trim();
+      const sifre = document.getElementById(`sifre_${sayfaAdi}`).value.trim();
+
+      try {
+        const res = await fetch(API_URL + '/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            islem: 'personelGuncelle',
+            sayfaAdi,
+            gorunenAd,
+            kacinci,
+            sifre
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("Personel bilgileri güncellendi.");
+        } else {
+          alert("Güncelleme başarısız.");
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     function anaSayfayaDon() {
@@ -493,341 +802,141 @@
     async function istatistikSayfasinaGit() {
       document.getElementById('adminScreen').style.display = 'none';
       document.getElementById('statsScreen').style.display = 'block';
-      await istatistikVerileriniHazirla();
-    }
-
-    async function randevulariGetir() {
-      if (!currentUser) return;
-      try {
-        const res = await fetch(`${API_URL}/api/randevulariGetir?sayfa=${currentUser.sayfaAdi}`);
-        let gelenRandevular = await res.json();
-        
-        // Müşteri listesini tüm berberlerin ortak kayıtlarından otomatik doldur
-        const mRes = await fetch(`${API_URL}/api/tumMusterileriGetir`);
-        let tumMusterilerDizi = await mRes.json();
-        
-        tumVeritabaniMusterileri = {};
-        tumMusterilerDizi.forEach(m => {
-          if (m.musteri && m.telefon) {
-            tumVeritabaniMusterileri[m.musteri.toLowerCase()] = m.telefon;
-          }
-        });
-        musteriListesiniDoldur();
-
-        const simdikiZaman = new Date();
-        
-        aktifRandevular = gelenRandevular.filter(r => {
-          if (!r.tarih || !r.saat) return false;
-          let [yil, ay, gun] = r.tarih.split('-').map(Number);
-          let [saat, dakika] = r.saat.split(':').map(Number);
-          
-          let randevuZamani = new Date(yil, ay - 1, gun, saat, dakika, 0);
-          return randevuZamani >= simdikiZaman;
-        });
-
-        aktifRandevular.sort((a, b) => {
-          let tarihKarsilastirma = a.tarih.localeCompare(b.tarih);
-          if (tarihKarsilastirma !== 0) return tarihKarsilastirma;
-          return a.saat.localeCompare(b.saat);
-        });
-
-        const container = document.getElementById('randevuListesi');
-        
-        if (aktifRandevular.length === 0) {
-          container.innerHTML = '<p style="text-align:center; color:#888; padding:10px;">Henüz aktif randevu bulunmuyor.</p>';
-        } else {
-          container.innerHTML = aktifRandevular.map(r => {
-            let telTemiz = r.telefon ? r.telefon.replace(/\s+/g, '') : '';
-            let formatliTarih = tarihNoktaliyeCevir(r.tarih);
-            return `
-              <div class="appointment-item">
-                <div class="appointment-info">
-                  <div class="time">${formatliTarih} - ${r.saat}</div>
-                  <div class="name">Müşteri: ${r.musteri}</div>
-                  <div style="color:#666;">${r.telefon || 'Belirtilmemiş'}</div>
-                </div>
-                <div class="item-btns">
-                  ${telTemiz ? `<a href="tel:${telTemiz}" class="call-btn">Ara</a>` : ''}
-                  <button class="del-btn" onclick="randevuSil(${r.satir})">Sil</button>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-        
-        saatleriGuncelle();
-      } catch (err) {
-        console.error("Randevular alınamadı", err);
-      }
-    }
-
-    function musteriListesiniDoldur() {
-      const datalist = document.getElementById('musteriListesi');
-      if (!datalist) return;
-      datalist.innerHTML = '';
       
-      let benzersizIsimler = Object.keys(tumVeritabaniMusterileri);
-      benzersizIsimler.forEach(isim => {
-        let opt = document.createElement('option');
-        opt.value = isim.charAt(0).toUpperCase() + isim.slice(1);
-        datalist.appendChild(opt);
-      });
-    }
-
-    function musteriSecildi(input) {
-      let girilenIsim = input.value.trim().toLowerCase();
-      let telInput = document.getElementById('musteriTel');
-      
-      if (tumVeritabaniMusterileri[girilenIsim]) {
-        telInput.value = tumVeritabaniMusterileri[girilenIsim];
-      }
-    }
-
-    async function randevuEkle() {
-      const tarih = document.getElementById('randevuTarih').value;
-      const saat = document.getElementById('randevuSaat').value;
-      const musteri = document.getElementById('musteriAdi').value.trim();
-      const telefon = document.getElementById('musteriTel').value.trim();
-
-      if (!tarih || !saat || !musteri) {
-        alert("Lütfen tarih, saat ve müşteri adı alanlarını doldurun!");
-        return;
-      }
-
       try {
-        const res = await fetch(`${API_URL}/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            islem: 'randevuEkle',
-            sayfa: currentUser.sayfaAdi,
-            tarih, saat, musteri, telefon,
-            personel: currentUser.gorunenAd
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-          document.getElementById('randevuTarih').valueAsDate = new Date();
-          document.getElementById('musteriAdi').value = '';
-          document.getElementById('musteriTel').value = '';
-          randevulariGetir();
-        } else {
-          alert(data.message || "Randevu eklenemedi.");
-        }
-      } catch (err) {
-        alert("Randevu eklenirken hata oluştu.");
-      }
-    }
-
-    async function randevuSil(satir) {
-      if (!confirm("Bu randevuyu silmek istediğinize emin misiniz?")) return;
-      try {
-        const res = await fetch(`${API_URL}/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ islem: 'sil', sayfa: currentUser.sayfaAdi, satir })
-        });
-        const data = await res.json();
-        if (data.success) randevulariGetir();
-      } catch (err) {
-        alert("Silme işlemi başarısız.");
-      }
-    }
-
-    async function personelleriGetir() {
-      try {
-        const res = await fetch(`${API_URL}/api/personelleriGetir`);
-        const personeller = await res.json();
-        const container = document.getElementById('koltuklarListesi');
-
-        container.innerHTML = personeller.map(p => `
-          <div class="koltuk-row">
-            <label>Berber / Koltuk Adı:</label>
-            <input type="text" id="ad_${p.sayfaAdi}" value="${p.gorunenAd || ''}">
-            
-            <label>Kullanıcı Adı:</label>
-            <input type="text" id="kadi_${p.sayfaAdi}" value="${p.kacinci || ''}">
-            
-            <label>Şifre:</label>
-            <input type="text" id="sifre_${p.sayfaAdi}" value="${p.sifre || ''}">
-            
-            <button onclick="personelGuncelle('${p.sayfaAdi}')">Bilgileri Güncelle</button>
-          </div>
-        `).join('');
-      } catch (err) {
-        console.error("Personeller alınamadı", err);
-      }
-    }
-
-    async function personelGuncelle(sayfaAdi) {
-      const yeniAd = document.getElementById(`ad_${sayfaAdi}`).value.trim();
-      const yeniKadi = document.getElementById(`kadi_${sayfaAdi}`).value.trim();
-      const yeniSifre = document.getElementById(`sifre_${sayfaAdi}`).value.trim();
-
-      try {
-        const res = await fetch(`${API_URL}/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            islem: 'personelGuncelle',
-            sayfaAdi: sayfaAdi,
-            gorunenAd: yeniAd,
-            kacinci: yeniKadi,
-            sifre: yeniSifre
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-          alert("Bilgiler başarıyla güncellendi!");
-          personelleriGetir();
-        } else {
-          alert(data.message || "Güncelleme başarısız.");
-        }
-      } catch (err) {
-        alert("Güncelleme başarısız.");
-      }
-    }
-
-    async function istatistikVerileriniHazirla() {
-      try {
-        const res = await fetch(`${API_URL}/api/personelleriGetir`);
-        const personeller = await res.json();
-
+        const berberSayfalari = ['Randevular', 'Randevular1', 'Randevular2', 'Randevular3', 'Randevular4'];
         tumPersonellerinRandevulari = {};
-        for (let p of personeller) {
-          if (p.gorunenAd && p.gorunenAd.trim() !== '') {
-            const rRes = await fetch(`${API_URL}/api/randevulariGetir?sayfa=${p.sayfaAdi}`);
-            const rData = await rRes.json();
-            tumPersonellerinRandevulari[p.sayfaAdi] = {
-              gorunenAd: p.gorunenAd,
-              randevular: rData
-            };
-          }
+        
+        for (let sayfa of berberSayfalari) {
+          const res = await fetch(`${API_URL}/api/randevulariGetir?sayfa=${sayfa}`);
+          const data = await res.json();
+          tumPersonellerinRandevulari[sayfa] = data;
         }
-        istatistikleriTabloyaBas();
+
+        istatistikleriGoster();
       } catch (err) {
-        console.error("İstatistik verileri alınamadı", err);
+        console.error(err);
       }
     }
 
-    function filtreDegistir(filtreTuru, btnElement) {
-      aktifIstatistikFiltresi = filtreTuru;
+    function filtreDegistir(filtre, btn) {
+      aktifIstatistikFiltresi = filtre;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btnElement.classList.add('active');
-      istatistikleriTabloyaBas();
+      btn.classList.add('active');
+      istatistikleriGoster();
     }
 
-    function tarihFiltrele(randevular, tur) {
+    function istatistikleriGoster() {
+      const table = document.getElementById('statsTableContent');
+      
+      const berberler = [
+        { sayfa: 'Randevular', ad: 'Ethem' },
+        { sayfa: 'Randevular1', ad: 'Mustafa' },
+        { sayfa: 'Randevular2', ad: 'tanju' },
+        { sayfa: 'Randevular3', ad: 'Berber 3' },
+        { sayfa: 'Randevular4', ad: 'Berber 4' }
+      ];
+
       const simdi = new Date();
-      const bugunStr = `${simdi.getFullYear()}-${String(simdi.getMonth() + 1).padStart(2, '0')}-${String(simdi.getDate()).padStart(2, '0')}`;
+      const bugunStr = simdi.toISOString().split('T')[0];
 
-      return randevular.filter(r => {
-        if (!r.tarih) return false;
+      let aktifPersoneller = [];
 
-        if (tur === 'tum') {
-          return true;
-        } else if (tur === 'bugun') {
-          return r.tarih === bugunStr;
-        } else if (tur === 'hafta') {
-          let [yil, ay, gun] = r.tarih.split('-').map(Number);
-          let rDate = new Date(yil, ay - 1, gun);
-          let day = simdi.getDay() || 7;
-          let pzt = new Date(simdi);
-          pzt.setDate(simdi.getDate() - day + 1);
-          pzt.setHours(0,0,0,0);
-          let pazar = new Date(pzt);
-          pazar.setDate(pzt.getDate() + 6);
-          pazar.setHours(23,59,59,999);
-          return rDate >= pzt && rDate <= pazar;
-        } else if (tur === 'ay') {
-          let [yil, ay, gun] = r.tarih.split('-').map(Number);
-          return yil === simdi.getFullYear() && ay === (simdi.getMonth() + 1);
-        } else if (tur === 'yil') {
-          let [yil, ay, gun] = r.tarih.split('-').map(Number);
-          return yil === simdi.getFullYear();
+      berberler.forEach(b => {
+        let liste = tumPersonellerinRandevulari[b.sayfa] || [];
+        
+        let filtrelenmis = liste.filter(r => {
+          if (!r.tarih) return false;
+          let rDate = new Date(r.tarih);
+          
+          if (aktifIstatistikFiltresi === 'bugun') {
+            return r.tarih === bugunStr;
+          } else if (aktifIstatistikFiltresi === 'hafta') {
+            let diffTime = simdi - rDate;
+            let diffDays = diffTime / (1000 * 60 * 60 * 24);
+            return diffDays >= 0 && diffDays <= 7;
+          } else if (aktifIstatistikFiltresi === 'ay') {
+            return rDate.getFullYear() === simdi.getFullYear() && rDate.getMonth() === simdi.getMonth();
+          } else if (aktifIstatistikFiltresi === 'yil') {
+            return rDate.getFullYear() === simdi.getFullYear();
+          } else {
+            return true;
+          }
+        });
+
+        if (filtrelenmis.length > 0) {
+          aktifPersoneller.push({
+            ad: b.ad,
+            randevular: filtrelenmis
+          });
         }
-        return true;
       });
-    }
 
-    function gunAdiGetir(tarihStr) {
-      if (!tarihStr) return '';
-      let [yil, ay, gun] = tarihStr.split('-').map(Number);
-      let d = new Date(yil, ay - 1, gun);
-      let gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-      let gunIsmi = gunler[d.getDay()];
-      let formatli = `${gun < 10 ? '0'+gun : gun}.${ay < 10 ? '0'+ay : ay}`;
-      return `${formatli} (${gunIsmi})`;
-    }
-
-    function istatistikleriTabloyaBas() {
-      const container = document.getElementById('statsTableContent');
-      const personelKeyList = Object.keys(tumPersonellerinRandevulari);
-
-      if (personelKeyList.length === 0) {
-        container.innerHTML = '<tr><td style="padding:20px; text-align:center;">Veri bulunamadı.</td></tr>';
+      if (aktifPersoneller.length === 0) {
+        table.innerHTML = `<thead><tr><th>İstatistikler</th></tr></thead><tbody><tr><td style="color:var(--text-sub); padding:20px; text-align:center;">Seçilen aralıkta randevu bulunmuyor.</td></tr></tbody>`;
         return;
       }
 
-      let colWidth = Math.floor(100 / (personelKeyList.length + 1));
-      let colGroupHTML = `<colgroup><col style="width:${colWidth}%">`;
-      personelKeyList.forEach(() => { colGroupHTML += `<col style="width:${colWidth}%">`; });
-      colGroupHTML += '</colgroup>';
-
-      let headerHTML = '<tr><th>İstatistikler</th>';
-      personelKeyList.forEach(key => {
-        headerHTML += `<th>${tumPersonellerinRandevulari[key].gorunenAd}</th>`;
+      let html = `<thead><tr><th style="text-align:left;">İstatistikler</th>`;
+      aktifPersoneller.forEach(p => {
+        html += `<th>${p.ad}</th>`;
       });
-      headerHTML += '</tr>';
+      html += `</tr></thead><tbody>`;
 
-      let toplamIsSatir = '<tr><td><strong>Toplam iş</strong></td>';
-      let enDoluGunSatir = '<tr><td><strong>En dolu gün</strong></td>';
-      let enDoluSaatSatir = '<tr><td><strong>En dolu saat</strong></td>';
+      html += `<tr><td>Toplam iş sayısı</td>`;
+      aktifPersoneller.forEach(p => {
+        html += `<td style="font-weight:bold;">${p.randevular.length}</td>`;
+      });
+      html += `</tr>`;
 
-      personelKeyList.forEach(key => {
-        let filtrelenmis = tarihFiltrele(tumPersonellerinRandevulari[key].randevular, aktifIstatistikFiltresi);
-        
-        let toplamIs = filtrelenmis.length;
-        toplamIsSatir += `<td><span style="font-size:15px; font-weight:bold; color:var(--secondary);">${toplamIs}</span></td>`;
-
+      const gunIsimleri = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+      html += `<tr><td>En dolu gün</td>`;
+      aktifPersoneller.forEach(p => {
         let gunSayilari = {};
-        filtrelenmis.forEach(r => { gunSayilari[r.tarih] = (gunSayilari[r.tarih] || 0) + 1; });
+        p.randevular.forEach(r => {
+          gunSayilari[r.tarih] = (gunSayilari[r.tarih] || 0) + 1;
+        });
         let enDoluTarih = '';
-        let maxGunSayisi = 0;
+        let maxCount = -1;
         for (let t in gunSayilari) {
-          if (gunSayilari[t] > maxGunSayisi) {
-            maxGunSayisi = gunSayilari[t];
+          if (gunSayilari[t] > maxCount) {
+            maxCount = gunSayilari[t];
             enDoluTarih = t;
           }
         }
-        enDoluGunSatir += `<td>${enDoluTarih ? gunAdiGetir(enDoluTarih) : '-'}</td>`;
+        if (enDoluTarih) {
+          let [yil, ay, gun] = enDoluTarih.split('-');
+          let dObj = new Date(yil, ay - 1, gun);
+          let gunAdi = gunIsimleri[dObj.getDay()];
+          html += `<td>${gun}.${ay}.${yil} ${gunAdi}</td>`;
+        } else {
+          html += `<td>-</td>`;
+        }
+      });
+      html += `</tr>`;
 
+      html += `<tr><td>En dolu saat aralığı</td>`;
+      aktifPersoneller.forEach(p => {
         let saatSayilari = {};
-        filtrelenmis.forEach(r => {
-          if (r.saat) { saatSayilari[r.saat] = (saatSayilari[r.saat] || 0) + 1; }
+        p.randevular.forEach(r => {
+          if (r.saat) {
+            saatSayilari[r.saat] = (saatSayilari[r.saat] || 0) + 1;
+          }
         });
         let enDoluSaat = '';
-        let maxSaatSayisi = 0;
+        let maxSaatCount = -1;
         for (let s in saatSayilari) {
-          if (saatSayilari[s] > maxSaatSayisi) {
-            maxSaatSayisi = saatSayilari[s];
+          if (saatSayilari[s] > maxSaatCount) {
+            maxSaatCount = saatSayilari[s];
             enDoluSaat = s;
           }
         }
-        enDoluSaatSatir += `<td>${enDoluSaat ? enDoluSaat : '-'}</td>`;
+        html += `<td>${enDoluSaat || '-'}</td>`;
       });
+      html += `</tr>`;
 
-      toplamIsSatir += '</tr>';
-      enDoluGunSatir += '</tr>';
-      enDoluSaatSatir += '</tr>';
-
-      container.innerHTML = colGroupHTML + headerHTML + toplamIsSatir + enDoluGunSatir + enDoluSaatSatir;
-    }
-
-    function cikisYap() {
-      localStorage.removeItem('kuaforUser');
-      currentUser = null;
-      location.reload();
+      html += `</tbody>`;
+      table.innerHTML = html;
     }
   </script>
 </body>
