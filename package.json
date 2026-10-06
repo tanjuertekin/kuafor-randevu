@@ -1,0 +1,13 @@
+{
+  "name": "kuafor_randevu",
+  "version": "1.0.0",
+  "description": "Kuaför Randevu Sistemi",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
