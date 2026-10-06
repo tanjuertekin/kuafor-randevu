@@ -333,7 +333,24 @@
     let tumPersonellerinRandevulari = {}; 
     let aktifIstatistikFiltresi = 'bugun';
 
-    document.getElementById('randevuTarih').valueAsDate = new Date();
+    // Sayfa açıldığında tarih alanına bugünün tarihini atayalım
+    document.addEventListener("DOMContentLoaded", () => {
+      const tarihInput = document.getElementById('randevuTarih');
+      if (tarihInput) {
+        tarihInput.valueAsDate = new Date();
+      }
+      
+      // Kayıtlı oturum kontrolü
+      const saved = localStorage.getItem('kuaforUser');
+      if (saved) {
+        try {
+          currentUser = JSON.parse(saved);
+          ekraniGuncelle();
+        } catch (e) {
+          localStorage.removeItem('kuaforUser');
+        }
+      }
+    });
 
     function tarihNoktaliyeCevir(tarihStr) {
       if (!tarihStr) return '';
@@ -360,6 +377,7 @@
     function saatleriGuncelle() {
       const saatSelect = document.getElementById('randevuSaat');
       const secilenTarihStr = document.getElementById('randevuTarih').value;
+      if (!saatSelect) return;
       
       saatSelect.innerHTML = '';
 
@@ -432,7 +450,7 @@
           localStorage.setItem('kuaforUser', JSON.stringify(currentUser));
           ekraniGuncelle();
         } else {
-          errorDiv.innerText = data.message;
+          errorDiv.innerText = data.message || "Giriş başarısız!";
         }
       } catch (err) {
         errorDiv.innerText = "Sunucuya bağlanılamadı!";
@@ -440,9 +458,7 @@
     }
 
     function ekraniGuncelle() {
-      const saved = localStorage.getItem('kuaforUser');
-      if (!saved) return;
-      currentUser = JSON.parse(saved);
+      if (!currentUser) return;
 
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('adminScreen').style.display = 'none';
@@ -452,8 +468,11 @@
 
       randevulariGetir();
 
-      if (currentUser.kadi.toLowerCase() === 'ethem') {
+      // Büyük/küçük harf duyarlılığından bağımsız olarak 'ethem' kullanıcısına yönetim butonu verelim
+      if (currentUser.kadi && currentUser.kadi.toLowerCase() === 'ethem') {
         document.getElementById('yoneticiMenuBtn').style.display = 'inline-block';
+      } else {
+        document.getElementById('yoneticiMenuBtn').style.display = 'none';
       }
     }
 
@@ -478,6 +497,7 @@
     }
 
     async function randevulariGetir() {
+      if (!currentUser) return;
       try {
         const res = await fetch(`${API_URL}/api/randevulariGetir?sayfa=${currentUser.sayfaAdi}`);
         let gelenRandevular = await res.json();
@@ -543,6 +563,7 @@
 
     function musteriListesiniDoldur() {
       const datalist = document.getElementById('musteriListesi');
+      if (!datalist) return;
       datalist.innerHTML = '';
       
       let benzersizIsimler = Object.keys(tumVeritabaniMusterileri);
@@ -590,6 +611,8 @@
           document.getElementById('musteriAdi').value = '';
           document.getElementById('musteriTel').value = '';
           randevulariGetir();
+        } else {
+          alert(data.message || "Randevu eklenemedi.");
         }
       } catch (err) {
         alert("Randevu eklenirken hata oluştu.");
@@ -657,6 +680,8 @@
         if (data.success) {
           alert("Bilgiler başarıyla güncellendi!");
           personelleriGetir();
+        } else {
+          alert(data.message || "Güncelleme başarısız.");
         }
       } catch (err) {
         alert("Güncelleme başarısız.");
@@ -801,11 +826,8 @@
 
     function cikisYap() {
       localStorage.removeItem('kuaforUser');
+      currentUser = null;
       location.reload();
-    }
-
-    if (localStorage.getItem('kuaforUser')) {
-      ekraniGuncelle();
     }
   </script>
 </body>
